@@ -7,6 +7,7 @@ import argparse
 
 from data_extraction import SQLHandler
 from data_cleaning import clean_all
+from models import run_model
 
 def config_parser(json_path):
     try:
@@ -25,28 +26,47 @@ class PipelineRunner(object):
                                      'config.json')
         self.config_dict = config_parser(json_path)
         print('Loaded config at {}'.format(json_path))
-
+        self.read_config()
         self.df = None
+
+    def read_config(self):
+        '''
+        Hide the mess of reading config file values
+        into keyword arguments.
+        '''
+        server_keywords = ['server', 'database', 'username', 'password', 'table_name']
+        self.server_configs = dict((k, self.config_dict[k]) for k in server_keywords)
+
+        extract_keywords = ['year_from', 'year_to', 'exclude_fields']
+        self.extract_configs = dict((k, self.config_dict[k]) for k in extract_keywords)
 
     def extract_data(self):
         # Unpack settings from config file into args
-        handle = SQLHandler(server=self.config_dict["server"],
-                            database=self.config_dict["database"],
-                            username=self.config_dict["username"],
-                            password=self.config_dict["password"],
-                            table_name=self.config_dict["table_name"])
-        self.df = handle.extract(year_from=self.config_dict["year_from"],
-                                 year_to=self.config_dict["year_to"],
-                                 exclude_fields=self.config_dict["exclude_fields"])
+        handle = SQLHandler(**self.server_configs)
+        self.df = handle.extract(**self.extract_configs)
         print('Data Extracted')
 
     def clean_data(self):
-        clean_all(self.df)
+        self.df = clean_all(self.df)
         print('Data Cleaned')
 
     def train_eval_model(self):
-        print('Model Trained')
-        print('Model Evaluated')
+        # Run model for registered scooters
+        X = self.df[['hr',
+                     'feels_like_temperature',
+                     'relative_humidity',
+                     'windspeed',
+                     'weather_clear',
+                     'weather_cloudy',
+                     'weather_heavy snow/rain',
+                     'weather_light snow/rain']].to_numpy()
+        
+        y1 = self.df['guest_scooter'].to_numpy()
+        run_model(X, y1)
+
+        # Run model for guest scooters
+        y2 = self.df['registered_scooter'].to_numpy()
+        run_model(X, y2)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run the mlp Pipeline')

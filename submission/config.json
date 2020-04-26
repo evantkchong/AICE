@@ -10,6 +10,8 @@
         "guest_bike",
         "registered_bike"
     ],
-    "model":""
+    "model":"linear_regression",
+    "cluster_mtd": "kmeans",
+    "num_clusters": 2
 }
   

@@ -19,11 +19,19 @@ def fix_weather(df):
 
     # Now we convert the field into a categorical field
     df["weather"] = df["weather"].astype('category')
+    return df
 
 def fix_date(df):
     df['date'] = pd.to_datetime(df['date'], utc=False)
+    return df
+
+def one_hot_encode_column(df, column):
+    ohe = pd.get_dummies(df[[column]])
+    new_df = pd.concat([df, ohe], axis=1)
+    return new_df
 
 def clean_all(df):
-   fix_weather(df)
-   fix_date(df)
-   return df
+   df = fix_weather(df)
+   df = fix_date(df)
+   new_df = one_hot_encode_column(df, 'weather')
+   return new_df
