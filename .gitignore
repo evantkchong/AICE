@@ -1,5 +1,7 @@
 # Python
 env
+.ipynb_checkpoints
 
-# Submission zip file
+# Submission
 *.zip
+*.csv
