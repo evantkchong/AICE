@@ -5,4 +5,4 @@ __pycache__
 
 # Submission
 *.zip
-*.csv
+# *.csv

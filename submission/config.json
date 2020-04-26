@@ -1,0 +1,15 @@
+{
+    "server": "aice.database.windows.net",
+    "database": "aice",
+    "username": "aice_candidate",
+    "password": "@ic3_a3s0c1at3",
+    "table_name": "rental_data",
+    "year_from": 2011,
+    "year_to": 2012,
+    "exclude_fields":[
+        "guest_bike",
+        "registered_bike"
+    ],
+    "model":""
+}
+  

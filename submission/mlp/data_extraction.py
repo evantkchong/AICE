@@ -60,10 +60,6 @@ class SQLHandler(object):
                       autoload=True,
                       autoload_with=self.engine)
         columns = table.c
-        print('Table contains the following columns:')
-        for col in columns:
-            print(col.name, col.type)
-        print('\n')
 
         print('Excluding the following columns: {}'.format(exclude_fields))
         include_list = [col.name for col in columns if col.name not in exclude_fields]
@@ -102,8 +98,7 @@ class SQLHandler(object):
         Convenience function for exporting the extracted dataframe to a csv file
         '''
         if path is None:
-            path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
-                                '{}.csv'.format(self.table_name))
+            path = os.path.join('..', '{}.csv'.format(self.table_name))
 
         print('Exporting data to {}'.format(path))
         self.df.to_csv(path)
